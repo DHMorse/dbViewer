@@ -1,0 +1,31 @@
+{
+    "name": "electron-flask-app",
+    "version": "1.0.0",
+    "description": "Electron app with Flask backend",
+    "main": "main.js",
+    "scripts": {
+      "start": "electron .",
+      "build": "electron-builder"
+    },
+    "devDependencies": {
+      "electron-builder": "^24.6.0",
+      "electron": "^26.2.1"
+    },
+    "build": {
+      "appId": "com.example.electronflaskapp",
+      "files": [
+        "**/*",
+        "!flask-app/**/*"
+      ],
+      "linux": {
+        "target": ["AppImage"],
+        "category": "Utility"
+      },
+      "extraFiles": [
+        {
+          "from": "../flask-app",
+          "to": "flask-app"
+        }
+      ]
+    }
+  }
