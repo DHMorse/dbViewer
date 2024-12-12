@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Statistics</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Message Statistics</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th class="blue">Name</th>
+                    <th class="green">Total Msgs</th>
+                    <th class="yellow">Avg Msgs/Month</th>
+                    <th class="red">Avg Msgs/Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person, stats in person_data %}
+                <tr>
+                    <td class="blue">{{ person }}</td>
+                    <td class="green">{{ stats[0] }}</td>
+                    <td class="yellow">{{ "%.2f" | format(stats[1]) }}</td>
+                    <td class="red">{{ "%.2f" | format(stats[2]) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
