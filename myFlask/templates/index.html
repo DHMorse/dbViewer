@@ -23,8 +23,8 @@
                 <tr>
                     <td class="blue">{{ person }}</td>
                     <td class="green">{{ stats[0] }}</td>
-                    <td class="yellow">{{ "%.2f" | format(stats[1]) }}</td>
-                    <td class="red">{{ "%.2f" | format(stats[2]) }}</td>
+                    <td class="yellow">{{ stats[1] }}</td>
+                    <td class="red">{{ stats[2] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
