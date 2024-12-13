@@ -29,6 +29,30 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <h1 style="margin-top: 40px;">Message Streaks</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th class="blue">Name</th>
+                    <th class="green">Streak Days</th>
+                    <th class="yellow">Start Date</th>
+                    <th class="red">End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person, streak, start_date, end_date in streak_data %}
+                {% if streak > 0 %}
+                <tr>
+                    <td class="blue">{{ person }}</td>
+                    <td class="green">{{ streak }}</td>
+                    <td class="yellow">{{ start_date.strftime('%m-%d-%Y') if start_date else 'N/A' }}</td>
+                    <td class="red">{{ end_date.strftime('%m-%d-%Y') if end_date else 'N/A' }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

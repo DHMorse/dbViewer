@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import json
 import pymysql
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 
 # Load secrets from secrets.json
@@ -43,18 +43,73 @@ def fetch_message_data():
         # Store data with formatted numbers
         person_data[username] = (
             f"{total_msgs:,}",  # Total messages with commas
-            f"{average_month:,.2f}",  # Monthly average with 2 decimal places
+            f"{average_month:.2f}",  # Monthly average with 2 decimal places
             f"{average_day:.2f}"  # Daily average with 2 decimal places
         )
     
     conn.close()
     return sorted(person_data.items(), key=lambda item: int(item[1][0].replace(',', '')), reverse=True)
 
+def find_longest_streak():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get unique usernames
+    cursor.execute("SELECT DISTINCT username FROM messages")
+    usernames = [row[0] for row in cursor.fetchall()]
+    
+    # Track and find streaks
+    streak_data = []
+    for username in usernames:
+        # Query to get sorted unique dates for the user
+        query = """
+        SELECT DISTINCT DATE(time) as message_date 
+        FROM messages 
+        WHERE username = %s 
+        ORDER BY message_date
+        """
+        cursor.execute(query, (username,))
+        
+        date_list = [row[0] for row in cursor.fetchall()]
+        
+        if not date_list:
+            streak_data.append((username, 0, None, None))
+            continue
+        
+        # Streak calculation logic
+        longest_streak = 1
+        current_streak = 1
+        streak_start = date_list[0]
+        longest_start = longest_end = streak_start
+        
+        for i in range(1, len(date_list)):
+            if date_list[i] - date_list[i-1] == timedelta(days=1):
+                current_streak += 1
+            else:
+                if current_streak > longest_streak:
+                    longest_streak = current_streak
+                    longest_start = streak_start
+                    longest_end = date_list[i-1]
+                current_streak = 1
+                streak_start = date_list[i]
+        
+        # Final streak check
+        if current_streak > longest_streak:
+            longest_streak = current_streak
+            longest_start = streak_start
+            longest_end = date_list[-1]
+        
+        streak_data.append((username, longest_streak, longest_start, longest_end))
+    
+    conn.close()
+    return sorted(streak_data, key=lambda x: x[1], reverse=True)
+
 # Route for the homepage
 @app.route("/")
 def index():
     person_data = fetch_message_data()
-    return render_template("index.html", person_data=person_data)
+    streak_data = find_longest_streak()
+    return render_template("index.html", person_data=person_data, streak_data=streak_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
