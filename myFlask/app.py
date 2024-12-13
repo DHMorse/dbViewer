@@ -3,6 +3,7 @@ import json
 import pymysql
 from datetime import datetime, timedelta
 from collections import defaultdict
+from pytz import timezone
 
 # Load secrets from secrets.json
 with open("../secrets.json") as f:
@@ -60,6 +61,8 @@ def find_longest_streak():
     
     # Track and find streaks
     streak_data = []
+    today = datetime.now(timezone('US/Central')).date()  # Today's date in CST
+    
     for username in usernames:
         # Query to get sorted unique dates for the user
         query = """
@@ -73,7 +76,7 @@ def find_longest_streak():
         date_list = [row[0] for row in cursor.fetchall()]
         
         if not date_list:
-            streak_data.append((username, 0, None, None))
+            streak_data.append((username, 0, None, None, False))
             continue
         
         # Streak calculation logic
@@ -81,7 +84,7 @@ def find_longest_streak():
         current_streak = 1
         streak_start = date_list[0]
         longest_start = longest_end = streak_start
-        
+
         for i in range(1, len(date_list)):
             if date_list[i] - date_list[i-1] == timedelta(days=1):
                 current_streak += 1
@@ -98,11 +101,18 @@ def find_longest_streak():
             longest_streak = current_streak
             longest_start = streak_start
             longest_end = date_list[-1]
-        
-        streak_data.append((username, longest_streak, longest_start, longest_end))
+        else:
+            longest_end = longest_end  # Retain the end of the longest streak
+
+        # Check if the longest streak is current
+        is_current_streak = longest_end == today
+
+        streak_data.append((username, longest_streak, longest_start, longest_end, is_current_streak))
     
     conn.close()
     return sorted(streak_data, key=lambda x: x[1], reverse=True)
+
+
 
 # Route for the homepage
 @app.route("/")
