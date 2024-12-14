@@ -2,3 +2,5 @@ Flask
 mysql-connector-python
 pymysql
 pytz
+scp
+paramiko

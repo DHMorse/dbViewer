@@ -58,6 +58,28 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <h1 style="margin-top: 40px;">iMessage Message Statistics</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th class="blue">Name</th>
+                    <th class="green">Total Msgs</th>
+                    <th class="yellow">Avg Msgs/Month</th>
+                    <th class="red">Avg Msgs/Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person, stats in iMessagePersonData %}
+                <tr>
+                    <td class="blue">{{ person }}</td>
+                    <td class="green">{{ stats[0] }}</td>
+                    <td class="yellow">{{ stats[1] }}</td>
+                    <td class="red">{{ stats[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

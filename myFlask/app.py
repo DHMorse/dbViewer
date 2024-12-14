@@ -4,6 +4,34 @@ import pymysql
 from datetime import datetime, timedelta
 from collections import defaultdict
 from pytz import timezone
+import paramiko
+from scp import SCPClient
+import sqlite3
+import math
+
+def downloadDB(remote_host='raspberrypi', remote_user='danielpi', remote_password='password', remote_file_path='/home/danielpi/Documents/httpServer/iMessagelog.db', local_file_path='/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'):
+    try:
+        # Create an SSH client
+        ssh = paramiko.SSHClient()
+
+        # Automatically add host key if not in known_hosts
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        # Connect to the remote host
+        ssh.connect(hostname=remote_host, username=remote_user, password=remote_password)
+
+        # Use SCPClient to copy the file
+        with SCPClient(ssh.get_transport()) as scp:
+            scp.get(remote_file_path, local_file_path)
+
+        print(f"File {remote_file_path} copied to {local_file_path}")
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+
+    finally:
+        # Close the SSH connection
+        ssh.close()
 
 # Load secrets from secrets.json
 with open("../secrets.json") as f:
@@ -21,6 +49,75 @@ def get_db_connection():
         port=secrets.get("port", 3306),
         database=secrets["database"]
     )
+
+def get_contact_message_stats(db_path='/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'):
+    """
+    Analyze iMessage statistics from the provided database.
+    
+    Args:
+        db_path (str): Path to the SQLite database file
+    
+    Returns:
+        List of tuples with contact name and message statistics, 
+        sorted from greatest total messages to least
+    """
+    # Connect to the database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    # Query to get message statistics per contact, pre-sorted by total messages
+    query = """
+    SELECT 
+        contactName, 
+        COUNT(*) as total_messages,
+        MIN(secondsSinceEpoch) as earliest_timestamp,
+        MAX(secondsSinceEpoch) as latest_timestamp
+    FROM imessages
+    GROUP BY contactName
+    ORDER BY total_messages DESC
+    """
+    
+    # Execute the query
+    cursor.execute(query)
+    contacts = cursor.fetchall()
+    
+    # Process and calculate statistics
+    contact_stats = []
+    for contact, total_msgs, earliest_ts, latest_ts in contacts:
+        # Calculate total messages
+        total_messages = str(total_msgs)
+        
+        # Calculate total days and months
+        if earliest_ts and latest_ts:
+            # Convert timestamps to days
+            start_date = datetime.fromtimestamp(earliest_ts)
+            end_date = datetime.fromtimestamp(latest_ts)
+            total_days = max(1, (end_date - start_date).days + 1)
+            total_months = max(1, math.ceil(total_days / 30))
+            
+            # Calculate averages
+            avg_msgs_per_month = "{:.2f}".format(total_msgs / total_months)
+            avg_msgs_per_day = "{:.2f}".format(total_msgs / total_days)
+        else:
+            # Fallback if timestamp data is incomplete
+            avg_msgs_per_month = "0.00"
+            avg_msgs_per_day = "0.00"
+        
+        # Create the tuple for this contact
+        contact_stat = (
+            contact, 
+            (
+                total_messages, 
+                avg_msgs_per_month, 
+                avg_msgs_per_day
+            )
+        )
+        contact_stats.append(contact_stat)
+    
+    # Close the database connection
+    conn.close()
+    
+    return contact_stats
 
 def fetch_message_data():
     conn = get_db_connection()
@@ -119,7 +216,9 @@ def find_longest_streak():
 def index():
     person_data = fetch_message_data()
     streak_data = find_longest_streak()
-    return render_template("index.html", person_data=person_data, streak_data=streak_data)
+    iMessagePersonData = get_contact_message_stats()
+    print(iMessagePersonData)
+    return render_template("index.html", person_data=person_data, streak_data=streak_data, iMessagePersonData=iMessagePersonData)
 
 if __name__ == "__main__":
     app.run(debug=True)
