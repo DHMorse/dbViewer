@@ -7,30 +7,58 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Discord Message Statistics</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th class="blue">Name</th>
-                    <th class="green">Total Msgs</th>
-                    <th class="yellow">Avg Msgs/Month</th>
-                    <th class="red">Avg Msgs/Day</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for person, stats in person_data %}
-                <tr>
-                    <td class="blue">{{ person }}</td>
-                    <td class="green">{{ stats[0] }}</td>
-                    <td class="yellow">{{ stats[1] }}</td>
-                    <td class="red">{{ stats[2] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="stats-container">
+        <div class="discord-stats">
+            <h1>Discord Message Statistics</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Total Msgs</th>
+                        <th class="yellow">Avg Msgs/Month</th>
+                        <th class="red">Avg Msgs/Day</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person, stats in person_data %}
+                    <tr>
+                        <td class="blue">{{ person }}</td>
+                        <td class="green">{{ stats[0] }}</td>
+                        <td class="yellow">{{ stats[1] }}</td>
+                        <td class="red">{{ stats[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="imessage-stats">
+            <h1>iMessage Message Statistics</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Total Msgs</th>
+                        <th class="yellow">Avg Msgs/Month</th>
+                        <th class="red">Avg Msgs/Day</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person, stats in iMessagePersonData %}
+                    <tr>
+                        <td class="blue">{{ person }}</td>
+                        <td class="green">{{ stats[0] }}</td>
+                        <td class="yellow">{{ stats[1] }}</td>
+                        <td class="red">{{ stats[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        <h1 style="margin-top: 40px;">Discord Message Streaks</h1>
+    <div class="streak-stats">
+        <h1>Longest Discord Message Streaks</h1>
         <table>
             <thead>
                 <tr>
@@ -47,7 +75,7 @@
                     <td class="blue">
                         {{ person }}
                         {% if is_current %}
-                            🔥
+                        🔥
                         {% endif %}
                     </td>
                     <td class="green">{{ streak }}</td>
@@ -55,28 +83,6 @@
                     <td class="red">{{ end_date.strftime('%m-%d-%Y') if end_date else 'N/A' }}</td>
                 </tr>
                 {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <h1 style="margin-top: 40px;">iMessage Message Statistics</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th class="blue">Name</th>
-                    <th class="green">Total Msgs</th>
-                    <th class="yellow">Avg Msgs/Month</th>
-                    <th class="red">Avg Msgs/Day</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for person, stats in iMessagePersonData %}
-                <tr>
-                    <td class="blue">{{ person }}</td>
-                    <td class="green">{{ stats[0] }}</td>
-                    <td class="yellow">{{ stats[1] }}</td>
-                    <td class="red">{{ stats[2] }}</td>
-                </tr>
                 {% endfor %}
             </tbody>
         </table>

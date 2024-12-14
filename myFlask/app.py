@@ -223,7 +223,6 @@ def index():
     person_data = fetch_message_data()
     streak_data = find_longest_streak()
     iMessagePersonData = get_contact_message_stats()
-    print(iMessagePersonData)
     return render_template("index.html", person_data=person_data, streak_data=streak_data, iMessagePersonData=iMessagePersonData)
 
 if __name__ == "__main__":
