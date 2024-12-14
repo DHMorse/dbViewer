@@ -8,9 +8,14 @@ import paramiko
 from scp import SCPClient
 import sqlite3
 import math
+import os
 
-def downloadDB(remote_host='raspberrypi', remote_user='danielpi', remote_password='password', remote_file_path='/home/danielpi/Documents/httpServer/iMessagelog.db', local_file_path='/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'):
+DB_PATH = '/home/daniel/Documents/myCode/dbViewer/iMessagelog.db'
+
+def downloadDB(remote_host='raspberrypi', remote_user='danielpi', remote_password='password', remote_file_path='/home/danielpi/Documents/httpServer/iMessagelog.db', local_file_path=DB_PATH):
     try:
+        if os.path.exists(local_file_path):
+            os.remove(local_file_path)
         # Create an SSH client
         ssh = paramiko.SSHClient()
 
@@ -50,7 +55,8 @@ def get_db_connection():
         database=secrets["database"]
     )
 
-def get_contact_message_stats(db_path='/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'):
+def get_contact_message_stats(db_path=DB_PATH):
+    downloadDB()
     """
     Analyze iMessage statistics from the provided database.
     

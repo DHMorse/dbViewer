@@ -197,4 +197,6 @@ Thumbs.db
 *.bak
 *.swp
 
+
 secrets.json
+iMessagelog.db
