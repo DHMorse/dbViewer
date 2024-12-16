@@ -23,14 +23,14 @@ body {
 }
 
 .streak-stats {
-    max-width: 800px;
-    margin: 50px auto;
+    width: 40%; /* Match the width of the stat tables */
     background-color: #2f3136;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     text-align: center;
     padding: 20px;
 }
+
 
 h1 {
     color: #ffffff;

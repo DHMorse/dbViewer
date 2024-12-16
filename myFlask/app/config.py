@@ -1,6 +1,8 @@
 import json
 import pymysql
 
+DB_PATH = '/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'
+
 # Connect to MariaDB database
 def getDbConnection():
     with open("../secrets.json") as f:

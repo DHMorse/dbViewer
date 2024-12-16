@@ -2,12 +2,14 @@ from flask import Flask, render_template
 import paramiko
 from scp import SCPClient
 import os
+from datetime import datetime
 
 from app.getiMessageStats import getiMessageStatsFunc
 from app.getDiscordStats import getDiscordStatsFunc
 from app.getDiscordLongestStreak import getLongestDiscordStreakFunc
+from app.getiMessageLongestStreak import getiMessageLongestStreakFunc
 
-DB_PATH = '/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'
+from app.config import DB_PATH
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -42,13 +44,14 @@ def downloadDB(remote_host='raspberrypi', remote_user='danielpi', remote_passwor
 # Route for the homepage
 @app.route("/")
 def index():
-    discordStats = getDiscordStatsFunc()
+    discordMessageStats = getDiscordStatsFunc()
     discordLongestStreak = getLongestDiscordStreakFunc()
-    
+
     downloadDB()
     iMessagePersonData = getiMessageStatsFunc(DB_PATH)
-    
-    return render_template("index.html", person_data=discordStats, streak_data=discordLongestStreak, iMessagePersonData=iMessagePersonData)
+    iMessageLongestStreak = getiMessageLongestStreakFunc(DB_PATH)
+
+    return render_template("index.html", discordMessageStats=discordMessageStats, discordLongestStreak=discordLongestStreak, iMessagePersonData=iMessagePersonData, iMessageLongestStreak=iMessageLongestStreak)
 
 if __name__ == "__main__":
     app.run(debug=True)
