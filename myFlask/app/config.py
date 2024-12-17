@@ -1,6 +1,11 @@
 import json
 import pymysql
 
+REMOTE_HOST = 'raspberrypi'
+REMOTE_USER = 'danielpi'
+REMOTE_PASSWORD = 'password'
+REMOTE_FILE_PATH = '/home/danielpi/Documents/httpServer/iMessagelog.db'
+
 DB_PATH = '/home/daniel/Documents/myCode/dbViewer/myFlask/iMessagelog.db'
 
 # Connect to MariaDB database

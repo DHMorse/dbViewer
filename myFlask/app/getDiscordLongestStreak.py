@@ -30,7 +30,7 @@ def getLongestDiscordStreakFunc():
         
         # Convert UTC dates to CST dates
         date_list = [utc_tz.localize(datetime.combine(row[0], datetime.min.time())).astimezone(cst_tz).date() 
-                     for row in cursor.fetchall()]
+                    for row in cursor.fetchall()]
         
         if not date_list:
             streak_data.append((username, 0, None, None, False))
