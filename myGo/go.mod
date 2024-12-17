@@ -3,6 +3,7 @@ module github.com/DHMorse/dbViewer/m
 go 1.22.5
 
 require (
+	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/pkg/sftp v1.13.7
 	golang.org/x/crypto v0.31.0
 )

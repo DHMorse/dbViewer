@@ -35,20 +35,25 @@ func main() {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }
-
-// indexHandler handles the root endpoint and renders the template
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// Download the DB file from the remote server
 	err := app.DownloadDB(remoteHost, remoteUser, remotePassword, remoteFilePath, localFilePath)
 	if err != nil {
 		http.Error(w, "Failed to download database file", http.StatusInternalServerError)
-		return
+		return // Stop further execution
 	}
 
 	// Placeholder function calls (Replace with actual implementation)
 	discordMessageStats := app.GetDiscordStatsFunc()
 	discordLongestStreak := app.GetLongestDiscordStreakFunc()
-	iMessagePersonData := app.GetiMessageStatsFunc(localFilePath)
+
+	iMessagePersonData, err := app.GetiMessageStatsFunc(localFilePath)
+	if err != nil {
+		http.Error(w, "Failed to get iMessage stats", http.StatusInternalServerError)
+		log.Println("Error fetching iMessage stats:", err)
+		return // Stop further execution
+	}
+
 	iMessageLongestStreak := app.GetiMessageLongestStreakFunc(localFilePath)
 	iMessageCurrentStreak := app.GetiMessageCurrentStreakFunc(localFilePath)
 
@@ -57,7 +62,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
 		http.Error(w, "Failed to load template", http.StatusInternalServerError)
-		return
+		log.Println("Error parsing template:", err)
+		return // Stop further execution
 	}
 
 	// Data to pass to the template
@@ -78,5 +84,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// Render the template with data
 	if err := tmpl.Execute(w, data); err != nil {
 		http.Error(w, "Failed to render template", http.StatusInternalServerError)
+		log.Println("Error rendering template:", err)
+		return // Stop further execution
 	}
 }
