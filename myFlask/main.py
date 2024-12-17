@@ -6,8 +6,11 @@ from datetime import datetime
 
 from app.getiMessageStats import getiMessageStatsFunc
 from app.getDiscordStats import getDiscordStatsFunc
+
 from app.getDiscordLongestStreak import getLongestDiscordStreakFunc
 from app.getiMessageLongestStreak import getiMessageLongestStreakFunc
+
+from app.getiMessageCurrentStreak import getiMessageCurrentStreakFunc
 
 from app.config import DB_PATH
 
@@ -50,8 +53,15 @@ def index():
     downloadDB()
     iMessagePersonData = getiMessageStatsFunc(DB_PATH)
     iMessageLongestStreak = getiMessageLongestStreakFunc(DB_PATH)
+    iMessageCurrentStreak = getiMessageCurrentStreakFunc(DB_PATH)
 
-    return render_template("index.html", discordMessageStats=discordMessageStats, discordLongestStreak=discordLongestStreak, iMessagePersonData=iMessagePersonData, iMessageLongestStreak=iMessageLongestStreak)
+    return render_template("index.html", 
+                           discordMessageStats=discordMessageStats, 
+                           discordLongestStreak=discordLongestStreak, 
+                           iMessagePersonData=iMessagePersonData, 
+                           iMessageLongestStreak=iMessageLongestStreak, 
+                           iMessageCurrentStreak=iMessageCurrentStreak
+                           )
 
 if __name__ == "__main__":
     app.run(debug=True)
