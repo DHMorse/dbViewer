@@ -9,8 +9,21 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-// DownloadDB connects to a remote server via SSH and downloads the file
+// DownloadDB connects to a remote server via SSH, removes the existing file if it exists, and downloads the file
 func DownloadDB(host, user, password, remoteFilePath, localFilePath string) error {
+	// Check if the local file exists
+	if _, err := os.Stat(localFilePath); err == nil {
+		// File exists, so remove it
+		err := os.Remove(localFilePath)
+		if err != nil {
+			return fmt.Errorf("failed to remove existing local file: %v", err)
+		}
+		fmt.Printf("Existing file %s removed successfully\n", localFilePath)
+	} else if !os.IsNotExist(err) {
+		// If the error is not a "file does not exist" error, return it
+		return fmt.Errorf("failed to check file existence: %v", err)
+	}
+
 	// SSH Client Configuration
 	sshConfig := &ssh.ClientConfig{
 		User: user,

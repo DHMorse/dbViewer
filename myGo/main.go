@@ -18,11 +18,15 @@ const (
 	remoteFilePath = "/home/danielpi/Documents/httpServer/iMessagelog.db"
 	localFilePath  = "./iMessagelog.db" // Adjust for your environment
 	templatesDir   = "./templates"
+	staticDir      = "./static"
 )
 
 func main() {
-	// Initialize HTTP server
+	// Handle the root route
 	http.HandleFunc("/", indexHandler)
+
+	// Serve static files from the static directory
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
 	// Start the server
 	fmt.Println("Server is running on http://localhost:8080")
@@ -49,7 +53,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	iMessageCurrentStreak := app.GetiMessageCurrentStreakFunc(localFilePath)
 
 	// Parse HTML template
-	tmpl, err := template.ParseFiles(filepath.Join(templatesDir, "index.html"))
+	tmplPath := filepath.Join(templatesDir, "index.html")
+	tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
 		http.Error(w, "Failed to load template", http.StatusInternalServerError)
 		return

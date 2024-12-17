@@ -3,18 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistics</title>
+    <title>Message Statistics</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Statistics Dashboard</h1>
+    <header>
+        <h1>Message Statistics Dashboard</h1>
+    </header>
 
-    <h2>Discord Statistics</h2>
-    <p>Messages Stats: {{.DiscordMessageStats}}</p>
-    <p>Longest Streak: {{.DiscordLongestStreak}}</p>
+    <main class="stats-container">
+        <!-- Discord Stats Section -->
+        <section class="discord-stats">
+            <h2>Discord Message Statistics</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Total Messages</th>
+                        <th class="yellow">Average Messages/Month</th>
+                        <th class="red">Average Messages/Day</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .DiscordMessageStats}}
+                    <tr>
+                        <td class="blue">{{.Name}}</td>
+                        <td class="green">{{.TotalMessages}}</td>
+                        <td class="yellow">{{.AveragePerMonth}}</td>
+                        <td class="red">{{.AveragePerDay}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </section>
 
-    <h2>iMessage Statistics</h2>
-    <p>Person Data: {{.IMessagePersonData}}</p>
-    <p>Longest Streak: {{.IMessageLongestStreak}}</p>
-    <p>Current Streak: {{.IMessageCurrentStreak}}</p>
+        <!-- Discord Streaks Section -->
+        <section class="streak-stats">
+            <h2>Longest Discord Message Streaks</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Streak Days</th>
+                        <th class="yellow">Start Date</th>
+                        <th class="red">End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .DiscordLongestStreak}}
+                    <tr>
+                        <td class="blue">
+                            {{.Name}}
+                            {{if .IsCurrent}}
+                            🔥
+                            {{end}}
+                        </td>
+                        <td class="green">{{.StreakDays}}</td>
+                        <td class="yellow">{{.StartDate}}</td>
+                        <td class="red">{{.EndDate}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <main class="stats-container">
+        <!-- iMessage Stats Section -->
+        <section class="imessage-stats">
+            <h2>iMessage Statistics</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Total Messages</th>
+                        <th class="yellow">Average Messages/Month</th>
+                        <th class="red">Average Messages/Day</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .IMessagePersonData}}
+                    <tr>
+                        <td class="blue">{{.Name}}</td>
+                        <td class="green">{{.TotalMessages}}</td>
+                        <td class="yellow">{{.AveragePerMonth}}</td>
+                        <td class="red">{{.AveragePerDay}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- iMessage Streaks Section -->
+        <section class="streak-stats">
+            <h2>Longest iMessage Streaks</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Streak Days</th>
+                        <th class="yellow">Start Date</th>
+                        <th class="red">End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .IMessageLongestStreak}}
+                    <tr>
+                        <td class="blue">
+                            {{.Name}}
+                            {{if .IsCurrent}}
+                            🔥
+                            {{end}}
+                        </td>
+                        <td class="green">{{.StreakDays}}</td>
+                        <td class="yellow">{{.StartDate}}</td>
+                        <td class="red">{{.EndDate}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Message Statistics Dashboard</p>
+    </footer>
 </body>
 </html>
