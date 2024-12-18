@@ -120,5 +120,36 @@
             </table>
         </div>
     </div>
+    <div class="stats-container">
+        <div class="streak-stats">
+            <h1>Current iMessage Message Streaks</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="blue">Name</th>
+                        <th class="green">Streak Days</th>
+                        <th class="yellow">Start Date</th>
+                        <th class="red">End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for username, streak, start_date, end_date, is_current in iMessageCurrentStreak %}
+                    {% if streak > 0 %}
+                    <tr>
+                        <td class="blue">
+                            {{ username }}
+                            {% if is_current %}
+                            🔥
+                            {% endif %}
+                        </td>
+                        <td class="green">{{ streak }}</td>
+                        <td class="yellow">{{ start_date }}</td>
+                        <td class="red">{{ end_date }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
 </body>
 </html>
